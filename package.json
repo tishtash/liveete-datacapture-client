@@ -13,5 +13,8 @@
   },
   "author": "Live Eye Surveillance L.L.C.",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/ndugg05/liveete-datacapture-client#readme"
+  "homepage": "https://bitbucket.org/ndugg05/liveete-datacapture-client#readme",
+  "dependencies": {
+    "serialport": "^7.1.5"
+  }
 }

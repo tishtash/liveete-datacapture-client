@@ -1,6 +1,7 @@
 const net = require('net');
+const VirtualCom = require('./virtualCom');
 
-let clientConnectInterval;
+let com1; 
 
 const clientConnection = () => {
     const client = net.createConnection({
@@ -11,26 +12,26 @@ const clientConnection = () => {
     });
 
     client.on('connect', () => {
-        clearInterval(clientConnectInterval);
+        com1 = VirtualCom('COMX');
+        com1.init();
     })
     
     client.on('data', (data) => {
         console.log(data.toString());
+        com1.writeData(data);
     });
     
     client.on('end', () => {
-        clearInterval(clientConnectInterval);
-        console.log('End: disconnected from server');
+        console.log('End: disconnected from the server');
     });
     
     client.on('error', () => {
-        clearInterval(clientConnectInterval);
-        console.log('Error: disconnected from server');
+        console.log('Error: disconnected from the server');
     });
     
     client.on('close', () => {
-        clientConnectInterval = setInterval(() =>  clientConnection(), 50000);
-        console.log('Close: disconnected from server');
+        setTimeout(() => clientConnection(), 5000);
+        console.log('Close: disconnected from the server');
     });
 }
 
