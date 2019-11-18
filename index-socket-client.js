@@ -1,9 +1,10 @@
 const SerialPort = require("serialport");
 const mapper = {
-  "/dev/ttyUSB0": "COM6",
-  "/dev/ttyUSB1": "COM7",
-  "/dev/ttyUSB2": "COM8"
+  "/dev/ttyUSB0": "CNCA0",
+  "/dev/ttyUSB1": "CNCA1",
+  "/dev/ttyUSB2": "CNCA2"
 };
+const portRefMapper = {};
 
 const client = require("socket.io-client")("http://localhost:8000", {
   path: "/data"
@@ -16,17 +17,18 @@ client.on("disconnect", function() {
 });
 
 client.on("Connection-List", function(data) {
-  console.log(`${new Date()}::Client Data recieved:${JSON.stringify(data)}`);
+  console.log(`${new Date()}::Port Info recieved:${JSON.stringify(data)}`);
   if (mapper[data]) {
-    setupPort(mapper[data]);
-    portErrorListner(mapper[data]);
+    let portRef = getPortObj(mapper[data]);
+    portRefMapper[data] = portRef;
+    portErrorListner(portRef);
   }
 
   client.on(data, function(portData) {
-    console.log(
-      `${new Date()}::Port Data recieved:${JSON.stringify(portData)}`
-    );
-    writeData(mapper[data], portData);
+    // console.log(
+    //   `${new Date()}::Port Data recieved:${JSON.stringify(portData.toString())}`
+    // );
+    writeData(portRefMapper[data], portData);
   });
 });
 
@@ -35,8 +37,9 @@ client.on("connect_error", () => {
   client.off("Connection-List");
 });
 
-const setupPort = portName => {
-  const virtualPortRef = new SerialPort(portName);
+const getPortObj = portName => {
+  let virtualPortRef = new SerialPort(portName);
+  return virtualPortRef;
 };
 
 const writeData = (portName, dataBuffer) => {
@@ -50,6 +53,6 @@ const writeData = (portName, dataBuffer) => {
 const portErrorListner = portName => {
   portName.on("error", () => {
     console.log(`${new Date()}::Virtual Port Errored`);
-    // process.exit(1);
+    process.exit(1);
   });
 };

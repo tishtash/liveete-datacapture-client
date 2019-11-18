@@ -15,12 +15,11 @@ const clientConnection = () => {
   );
 
   client.on("connect", () => {
-    com1 = VirtualCom("COMX");
+    com1 = new VirtualCom("CNCA0");
     com1.init();
   });
 
   client.on("data", data => {
-    console.log(data.toString());
     com1.writeData(data);
   });
 
