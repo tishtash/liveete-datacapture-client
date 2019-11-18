@@ -16,6 +16,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/ndugg05/liveete-datacapture-client#readme",
   "dependencies": {
-    "serialport": "^7.1.5"
+    "serialport": "^7.1.5",
+    "socket.io-client": "^2.3.0"
   }
 }

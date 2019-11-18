@@ -12,7 +12,7 @@ const clientConnection = () => {
     });
 
     client.on('connect', () => {
-        com1 = VirtualCom('COMX');
+        com1 = new VirtualCom('COMX');
         com1.init();
     })
 
