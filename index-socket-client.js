@@ -19,9 +19,18 @@ client.on("disconnect", function() {
 client.on("Connection-List", function(data) {
   console.log(`${new Date()}::Port Info recieved:${JSON.stringify(data)}`);
   if (mapper[data]) {
+    console.log(
+      `${new Date()}::Port Mapped to Virtual Port:${JSON.stringify(
+        mapper[data]
+      )}`
+    );
     let portRef = getPortObj(mapper[data]);
     portRefMapper[data] = portRef;
     portErrorListner(portRef);
+  } else {
+    console.log(
+      `${new Date()}::Port Mapping Not Found:${JSON.stringify(data)}`
+    );
   }
 
   client.on(data, function(portData) {
@@ -51,8 +60,8 @@ const writeData = (portName, dataBuffer) => {
 };
 
 const portErrorListner = portName => {
-  portName.on("error", () => {
-    console.log(`${new Date()}::Virtual Port Errored`);
+  portName.on("error", err => {
+    console.log(`${new Date()}::Virtual Port Errored ::${err}`);
     process.exit(1);
   });
 };
