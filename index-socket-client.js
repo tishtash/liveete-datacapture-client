@@ -4,9 +4,9 @@ const mapper = {
   "/dev/ttyUSB1": "CNCA1",
   "/dev/ttyUSB2": "CNCA2"
 };
-const portRefMapper = {};
+let portRefMapper = {};
 
-const client = require("socket.io-client")("http://localhost:8000", {
+const client = require("socket.io-client")("http://10.1.10.48:8000", {
   path: "/data"
 });
 client.on("connect", function() {
@@ -14,6 +14,12 @@ client.on("connect", function() {
 });
 client.on("disconnect", function() {
   console.log(`${new Date()}::Client Disconnected`);
+  Object.keys(portRefMapper).map(portName => {
+    if (portRefMapper[portName].isOpen) {
+      portRefMapper[portName].close();
+    }
+    client.off(portName);
+  });
 });
 
 client.on("Connection-List", function(data) {
@@ -43,7 +49,6 @@ client.on("Connection-List", function(data) {
 
 client.on("connect_error", () => {
   console.log(`${new Date()}::Server Unavailable`);
-  client.off("Connection-List");
 });
 
 const getPortObj = portName => {
